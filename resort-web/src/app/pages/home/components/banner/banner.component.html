@@ -1,0 +1,33 @@
+<section class="b-container h-screen" [style.backgroundImage]="'linear-gradient(#0002, #000), url(' + bgImage + ')'">
+    <app-navbar></app-navbar>
+    <div class="banner text-center flex flex-col items-center justify-center h-screen p-2">
+        <p>It is time for vacation 🚀 </p>
+        <h1 class="text-4xl md:text-6xl font-bold">Explore The World's Finest <br> Hotel Experiences</h1>
+        <p>Discover the epitome of luxury and comfort as we unveil the world's most exquisites hotels, each offering <br> unparalleled experiences and unforgettable stays.</p>
+        <div>
+            <button (click)="navigateToRooms()" class="border px-4 py-2 mt-4 hover:bg-white hover:text-black transition-all">
+                Explore Rooms <i class="ms-2 fa-solid fa-arrow-up-right-from-square"></i>
+            </button>
+        </div>
+        
+    </div>
+</section>
+
+<!-- about brief -->
+<section class="p-4 mt-40 flex flex-wrap gap-10 justify-center" style="line-height: 1.6rem;">
+    <div class=" flex flex-col justify-start p-4 ">
+        <div>
+            <p class="font-bold tracking-widest text-xs mb-3">WELCOME TO AAMANTO</p>
+            <h2 class="text-3xl font-bold tracking-widest mb-3">A Scheduled Paradise <br> Fringed with white <br> sand beaches and <br> pristine reefs</h2>
+            <p class="text-xs  tracking-widest">Offering a bak to nature experience. <br> This tropical paradise is a place for the <br> curious to dig cheeper.Finding inspiration <br> in every unscripted adventure.</p>
+        </div>
+        <div>
+            <button (click)="navigateToAbout()" class="border px-4 py-2 mt-4 bg-[var(--text-color)] text-black">OUR STORY</button>
+        </div>
+    </div>
+    <div class=" p-3 flex justify-center items-center w-[400px] ">
+        <div>
+            <img class="" src="assets/Valentina Deckenleuchte, 2 Farben, 3_5_6-flammig 5 flammes-blanc.jpeg" alt="img" style="clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);">
+        </div>
+    </div>
+</section>

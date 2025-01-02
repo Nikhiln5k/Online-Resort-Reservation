@@ -1,0 +1,4 @@
+.footer-list ul li p:hover{
+    text-decoration-line: underline;
+    cursor: pointer;
+}
