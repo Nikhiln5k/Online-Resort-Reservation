@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 export class RoomsComponent {
   constructor ( private router: Router ) {}
 
+  bgImage = 'assets/9 Modern Minimalist Living Room Designs_ Embrace Simplicity and Elegance.jpeg'
+
   rooms = [
     {
       name: 'Deluxe Room',
@@ -40,6 +42,10 @@ export class RoomsComponent {
     },
   ];
 
+  navigateTo() {
+    this.router.navigate(['room-details']);
+  }
+
   currentPage = 1;
   itemsPerPage = 3; // Number of items per page
   paginatedRooms = this.rooms.slice(0, this.itemsPerPage);
@@ -65,7 +71,4 @@ export class RoomsComponent {
     }
   }
 
-  navigateTo() {
-    this.router.navigate(['room-details']);
-  }
 }

@@ -2,37 +2,52 @@
 
 <div class="container">
     <!-- Header Section -->
-    <div class="header">
-      <h1>Find Your Perfect Room</h1>
+    <div class="rooms-banner flex items-center justify-center h-[500px] w-100">
+      <div class="header text-center">
+        <h1 class="font-bold">Find Your Perfect Room</h1>
+        <p class="text-sm">Experience the perfect blend of comfort and convenience. Choose from a variety of rooms <br> to create memories that last a lifetime.</p>
+      </div>
     </div>
   
     <!-- Check Availability Section -->
-    <div class="availability-section">
-      <div class="form-group">
-        <label for="checkin-date">Check-in Date</label>
+    <div class="availability-section text-black w-[70%] md:-mt-14 -mt-28 mb-10 mx-auto p-4 bg-white rounded-lg shadow-md flex md:flex-row flex-col items-center justify-between">
+      <div class="form-group w-full text-sm">
+        <label for="room-type">Room Type</label>
+        <select id="room-type">
+          <option value="">Select type</option>
+          <option value="single">Single</option>
+          <option value="double">Double</option>
+          <option value="suite">Suite</option>
+        </select>
+      </div>
+    
+      <div class="form-group w-full text-sm">
+        <label for="checkin-date">Check-in</label>
         <input type="date" id="checkin-date" />
       </div>
-  
-      <div class="form-group">
-        <label for="checkout-date">Check-out Date</label>
+    
+      <div class="form-group w-full text-sm">
+        <label for="checkout-date">Check-out</label>
         <input type="date" id="checkout-date" />
       </div>
-  
-      <button class="btn btn-primary">Check Availability</button>
-    </div>
-  
-    <!-- Search and Filter Section -->
-    <div class="search-filter-section">
-      <div class="form-group">
-        <label for="search-rooms">Search Rooms</label>
-        <input type="text" id="search-rooms" placeholder="Search by room type or features" />
+    
+      <div class="form-group w-full text-sm">
+        <label for="rooms">Rooms</label>
+        <select id="rooms">
+          <option value="1">1 Room</option>
+          <option value="2">2 Rooms</option>
+          <option value="3">3 Rooms</option>
+        </select>
       </div>
-  
-      <button class="btn btn-secondary">Filters</button>
+    
+      <button class="btn btn-primary">Search</button>
     </div>
   
     <!-- Room Listing Section -->
-    <div class="room-listing">
+    <div class="md:text-4xl text-2xl font-bold">
+     <h2 class="tracking-wider">Enjoy an unforgettable stay <br> with the best charm.</h2>
+    </div>
+    <div class="room-listing mt-10">
       <div class="room-card" *ngFor="let room of rooms">
         <img [src]="room.image" alt="Room Image" />
         <div class="room-info">
