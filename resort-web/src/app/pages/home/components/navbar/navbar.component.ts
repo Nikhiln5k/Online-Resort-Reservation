@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -6,10 +6,17 @@ import { Router } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit{
   constructor ( private router: Router ) {}
 
   toggleMenu: boolean = false;
+  user: boolean = false;
+
+  ngOnInit(): void {
+    if(sessionStorage.getItem('token')){
+    this.user = true;
+  }
+  }
 
   onToggleMenu() {
     this.toggleMenu = !this.toggleMenu;
@@ -19,4 +26,5 @@ export class NavbarComponent {
   navigateTo(route: string): void {
     this.router.navigate([route]);
   }
+
 }

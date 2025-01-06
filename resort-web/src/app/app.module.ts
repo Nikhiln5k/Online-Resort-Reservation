@@ -14,7 +14,14 @@ import { AdminComponent } from './pages/admin/admin.component';
 import { BannerComponent } from './pages/home/components/banner/banner.component';
 import { NgxUiLoaderHttpModule, NgxUiLoaderModule } from 'ngx-ui-loader';
 import { NavbarComponent } from './pages/home/components/navbar/navbar.component';
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { environment } from 'src/enviornments/enviornment';
+import { FormsModule } from '@angular/forms';
 // import { SwiperModule } from 'swiper/angular'
+
+const app = initializeApp(environment.firebaseConfig);
+const analytics = getAnalytics(app);
 
 @NgModule({
   declarations: [
@@ -33,6 +40,7 @@ import { NavbarComponent } from './pages/home/components/navbar/navbar.component
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
     NgxUiLoaderModule,
     NgxUiLoaderHttpModule,
     // SwiperModule,
@@ -40,4 +48,15 @@ import { NavbarComponent } from './pages/home/components/navbar/navbar.component
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+  constructor() {
+    // Initialize Firebase
+    const app = initializeApp(environment.firebaseConfig);
+
+    if (environment.firebaseConfig.measurementId) {
+      getAnalytics(app);
+    }
+
+    console.log('Firebase initialized!');
+  }
+}

@@ -6,19 +6,19 @@
       <ul class="space-y-4">
         <li
           class="cursor-pointer p-2 text-center"
-          [class.bg-[#af9c5e]]="activeTab === 'booking-history'"
-          [class.text-black]="activeTab === 'booking-history'"
-          (click)="switchTab('booking-history')"
-        >
-          Booking History
-        </li>
-        <li
-          class="cursor-pointer p-2 text-center"
           [class.bg-[#af9c5e]]="activeTab === 'profile-management'"
           [class.text-black]="activeTab === 'profile-management'"
           (click)="switchTab('profile-management')"
         >
           Profile Management
+        </li>
+        <li
+          class="cursor-pointer p-2 text-center"
+          [class.bg-[#af9c5e]]="activeTab === 'booking-history'"
+          [class.text-black]="activeTab === 'booking-history'"
+          (click)="switchTab('booking-history')"
+        >
+          Booking History
         </li>
       </ul>
     </div>
@@ -26,6 +26,95 @@
     <!-- Main Content -->
     <div class="flex-1 p-6 bg-gray-100 text-black">
         <button (click)="navigateTo()" class="mb-10 font-bold text-2xl"><i class="fa-solid fa-arrow-left"></i></button>
+  
+      <!-- Profile Management -->
+      <div *ngIf="activeTab === 'profile-management'">
+        <h2 class="text-2xl font-bold mb-4">Profile Management</h2>
+        <div *ngIf="!isEditing; else editMode">
+            <!-- Profile Details View -->
+            <h2 class="text-2xl font-bold mb-4">Profile Details</h2>
+            <div class="mb-4">
+              <p class="font-bold">Name:</p>
+              <p class="text-gray-700">{{ profile.name }}</p>
+            </div>
+            <div class="mb-4">
+              <p class="font-bold">Email:</p>
+              <p class="text-gray-700">{{ profile.email }}</p>
+            </div>
+            <div class="mb-4">
+              <p class="font-bold">Phone:</p>
+              <p class="text-gray-700">{{ profile.phone }}</p>
+            </div>
+            <button
+              class="bg-black text-white px-4 py-2 hover:bg-[var(--dark-text)] hover:text-black hover:border"
+              (click)="toggleEdit(true)"
+            >
+              Edit Profile
+            </button>
+            <button
+              class="bg-black text-white ml-2 px-4 py-2 hover:bg-[var(--dark-text)] hover:text-black hover:border"
+              (click)="logout()"
+            >
+              Logout
+            </button>
+          </div>
+          
+          <!-- Edit Mode -->
+          <ng-template #editMode>
+            <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
+            <form (ngSubmit)="saveProfile()">
+              <div class="mb-4">
+                <label for="name" class="block font-bold mb-2">Name</label>
+                <input
+                  id="name"
+                  type="text"
+                  [(ngModel)]="profile.name"
+                  name="name"
+                  class="w-full p-2 border rounded-lg"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="email" class="block font-bold mb-2">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  [(ngModel)]="profile.email"
+                  name="email"
+                  class="w-full p-2 border rounded-lg"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div class="mb-4">
+                <label for="phone" class="block font-bold mb-2">Phone</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  [(ngModel)]="profile.phone"
+                  name="phone"
+                  class="w-full p-2 border rounded-lg"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+              <div class="flex space-x-4">
+                <button
+                  type="submit"
+                  class="bg-black text-white px-4 py-2 hover:bg-[var(--dark-text)] hover:text-black hover:border"
+                >
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  class="bg-black text-white px-4 py-2"
+                  (click)="toggleEdit(false)"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </ng-template>          
+      </div>
+
       <!-- Booking History -->
       <div *ngIf="activeTab === 'booking-history'">
         <h2 class="text-2xl font-bold mb-4">Booking History</h2>
@@ -60,88 +149,6 @@
             </tbody>
           </table>
         </div>
-      </div>
-  
-      <!-- Profile Management -->
-      <div *ngIf="activeTab === 'profile-management'">
-        <h2 class="text-2xl font-bold mb-4">Profile Management</h2>
-        <div *ngIf="!isEditing; else editMode">
-            <!-- Profile Details View -->
-            <h2 class="text-2xl font-bold mb-4">Profile Details</h2>
-            <div class="mb-4">
-              <p class="font-bold">Name:</p>
-              <p class="text-gray-700">{{ profile.name }}</p>
-            </div>
-            <div class="mb-4">
-              <p class="font-bold">Email:</p>
-              <p class="text-gray-700">{{ profile.email }}</p>
-            </div>
-            <div class="mb-4">
-              <p class="font-bold">Phone:</p>
-              <p class="text-gray-700">{{ profile.phone }}</p>
-            </div>
-            <button
-              class="bg-black text-white px-4 py-2 hover:bg-white hover:text-black hover:border"
-              (click)="toggleEdit(true)"
-            >
-              Edit Profile
-            </button>
-          </div>
-          
-          <!-- Edit Mode -->
-          <ng-template #editMode>
-            <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
-            <form (ngSubmit)="saveProfile()">
-              <div class="mb-4">
-                <label for="name" class="block font-bold mb-2">Name</label>
-                <input
-                  id="name"
-                  type="text"
-                  
-                  name="name"
-                  class="w-full p-2 border rounded-lg"
-                  placeholder="Enter your name"
-                />
-              </div>
-              <div class="mb-4">
-                <label for="email" class="block font-bold mb-2">Email</label>
-                <input
-                  id="email"
-                  type="email"
-                  
-                  name="email"
-                  class="w-full p-2 border rounded-lg"
-                  placeholder="Enter your email"
-                />
-              </div>
-              <div class="mb-4">
-                <label for="phone" class="block font-bold mb-2">Phone</label>
-                <input
-                  id="phone"
-                  type="tel"
-                  
-                  name="phone"
-                  class="w-full p-2 border rounded-lg"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-              <div class="flex space-x-4">
-                <button
-                  type="submit"
-                  class="bg-black text-white px-4 py-2 hover:bg-[var(--dark-text)] hover:text-black hover:border"
-                >
-                  Save Changes
-                </button>
-                <button
-                  type="button"
-                  class="bg-black text-white px-4 py-2"
-                  (click)="toggleEdit(false)"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </ng-template>          
       </div>
     </div>
   </div>

@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class UserComponent {
   constructor ( private router: Router) {}
 
-  activeTab: string = 'booking-history';
+  activeTab: string = 'profile-management';
   isEditing: boolean = false;
 
   navigateTo(){
@@ -42,7 +42,13 @@ export class UserComponent {
   // Save profile changes
   saveProfile() {
     this.isEditing = false;
+    console.log(this.profile)
     alert('Profile updated successfully!');
+  }
+
+  logout() {
+    sessionStorage.clear();
+    this.router.navigate(['/']);
   }
 
 }

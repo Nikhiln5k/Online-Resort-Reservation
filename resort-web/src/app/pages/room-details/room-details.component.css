@@ -1,0 +1,19 @@
+.container {
+    max-width: 1200px;
+  }
+  
+  .material-icons {
+    font-size: 24px;
+  }
+  
+  .text-primary {
+    color: var(--dark-text);
+  }
+  
+  .bg-primary {
+    background-color: var(--dark-text);
+  }
+  form input{
+    background: transparent;
+    /* color: var(--dark-text); */
+  }
