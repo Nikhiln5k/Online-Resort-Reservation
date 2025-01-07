@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/components/home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 import { AboutComponent } from './pages/about/about.component';
 import { RoomsComponent } from './pages/rooms/rooms.component';
 import { RoomDetailsComponent } from './pages/room-details/room-details.component';
@@ -17,7 +18,7 @@ import { NavbarComponent } from './pages/home/components/navbar/navbar.component
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { environment } from 'src/enviornments/enviornment';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { SwiperModule } from 'swiper/angular'
 
 const app = initializeApp(environment.firebaseConfig);
@@ -41,6 +42,8 @@ const analytics = getAnalytics(app);
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
     NgxUiLoaderModule,
     NgxUiLoaderHttpModule,
     // SwiperModule,
