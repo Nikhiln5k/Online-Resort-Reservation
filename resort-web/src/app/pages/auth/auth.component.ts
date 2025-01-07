@@ -68,7 +68,7 @@ export class AuthComponent implements OnInit {
           },
           error: err => {
             console.error('Login failed:', err);
-            alert(`Login failed: ${err?.message || 'An error occurred. Please try again.'}`);
+            alert(`Login failed: ${err?.error.message || 'An error occurred. Please try again.'}`);
           }
         });
       } else {
@@ -80,7 +80,7 @@ export class AuthComponent implements OnInit {
           },
           error: err => {
             console.error('Registration failed:', err);
-            alert(`Registration failed: ${err?.message || 'An error occurred. Please try again.'}`);
+            alert(`Registration failed: ${err?.error.message || 'An error occurred. Please try again.'}`);
           }
         });
       }
