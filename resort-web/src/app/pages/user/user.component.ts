@@ -13,6 +13,8 @@ export class UserComponent implements OnInit {
   userData: FormGroup;
   activeTab: string = 'profile-management';
   isEditing: boolean = false;
+  // userDetails
+  profile: any = null;
 
   constructor(
     private router: Router,
@@ -54,17 +56,15 @@ export class UserComponent implements OnInit {
     },
   ];
 
-  // userDetails
-  profile: any;
 
   ngOnInit(): void {
     const userId = sessionStorage.getItem('uid');
-    if (!userId) {
-      alert('User not found! please login');
-      this.router.navigate(['/auth'])
-      return;
+    if (userId) {
+      this.getUserDetails(userId);
+    } else {
+      alert('User not logged! please login.');
+      this.router.navigate(['/auth']);
     }
-    this.getUserDetails(userId);
   }
 
   // get user
@@ -72,7 +72,10 @@ export class UserComponent implements OnInit {
     this.userService.getUser(userId).subscribe({
       next: (response) => {
         this.profile = response;
-        // console.log('User details:', this.profile);
+        this.userData.patchValue({
+          name: this.profile.name,
+          email: this.profile.email,
+        });
       },
       error: (error) => {
         console.error('Error fetching user details:', error);
@@ -83,20 +86,23 @@ export class UserComponent implements OnInit {
 
   // update user details
   updateUserdata(): void {
-    const userDetails = this.userData.value;
-    const userId = sessionStorage.getItem('uid'); 
+    const userId = sessionStorage.getItem('uid');
     if (!userId) {
-      console.error('user not found! please login');
-      this.router.navigate(['/auth'])
+      console.error('User not found! please login.');
+      this.router.navigate(['/auth']);
       return;
     }
+    const userDetails = this.userData.value;
     this.userService.updateUser(userId, userDetails).subscribe({
-      next: (res) => {
-        alert(res.message);
+      next: (response) => {
+        alert(response?.message || 'User updated successfully.');
+        this.profile = response?.user;
+        this.toggleEdit(false);
       },
-      error: (err) => {
-        console.error('Error updating user:', err);
-      }
+      error: (error) => {
+        console.error('Error updating user details:', error);
+        alert('Error updating user details. Please try again.');
+      },
     });
   }
 
@@ -111,12 +117,12 @@ export class UserComponent implements OnInit {
 
   // Save profile changes
   saveProfile() {
-    this.isEditing = false;
-    alert('Profile updated successfully!');
+    this.updateUserdata();
   }
 
   logout() {
     sessionStorage.clear();
+    alert('Logged out success')
     this.router.navigate(['/']);
   }
 }

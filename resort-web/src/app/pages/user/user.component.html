@@ -35,16 +35,13 @@
             <h2 class="text-2xl font-bold mb-4">Profile Details</h2>
             <div class="mb-4">
               <p class="font-bold">Name:</p>
-              <p class="text-gray-700">{{ profile.name }}</p>
+              <p class="text-gray-700">{{ profile?.name || 'N/A' }}</p>
             </div>
             <div class="mb-4">
               <p class="font-bold">Email:</p>
-              <p class="text-gray-700">{{ profile.email }}</p>
+              <p class="text-gray-700">{{ profile?.email || 'N/A' }}</p>
             </div>
-            <div class="mb-4">
-              <p class="font-bold">Phone:</p>
-              <p class="text-gray-700">{{ profile.phone }}</p>
-            </div>
+            
             <button
               class="bg-black text-white px-4 py-2 hover:bg-[var(--dark-text)] hover:text-black hover:border"
               (click)="toggleEdit(true)"
@@ -62,14 +59,13 @@
           <!-- Edit Mode -->
           <ng-template #editMode>
             <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
-            <form (ngSubmit)="saveProfile()">
+            <form [formGroup]="userData" (ngSubmit)="saveProfile()">
               <div class="mb-4">
                 <label for="name" class="block font-bold mb-2">Name</label>
                 <input
                   id="name"
                   type="text"
-                  [(ngModel)]="profile.name"
-                  name="name"
+                  formControlName="name"
                   class="w-full p-2 border rounded-lg"
                   placeholder="Enter your name"
                 />
@@ -79,23 +75,12 @@
                 <input
                   id="email"
                   type="email"
-                  [(ngModel)]="profile.email"
-                  name="email"
+                  formControlName="email"
                   class="w-full p-2 border rounded-lg"
                   placeholder="Enter your email"
                 />
               </div>
-              <div class="mb-4">
-                <label for="phone" class="block font-bold mb-2">Phone</label>
-                <input
-                  id="phone"
-                  type="tel"
-                  [(ngModel)]="profile.phone"
-                  name="phone"
-                  class="w-full p-2 border rounded-lg"
-                  placeholder="Enter your phone number"
-                />
-              </div>
+              
               <div class="flex space-x-4">
                 <button
                   type="submit"

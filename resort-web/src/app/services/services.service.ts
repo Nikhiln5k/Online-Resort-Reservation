@@ -61,8 +61,8 @@ export class ServicesService {
   }
 
   // get user details
-  updateUser(userId: string, data: any): Observable<any> {
-    return this.commonAPI('PUT', `${this.apiUrl}/user/${userId}`, data);
+  updateUser(userId: string, userDetails: any): Observable<any> {
+    return this.commonAPI('PUT', `${this.apiUrl}/user/${userId}`, userDetails);
   }
 
 }
