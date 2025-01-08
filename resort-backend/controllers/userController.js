@@ -45,7 +45,7 @@ exports.userLogin = async (req, res) => {
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    res.status(200).json({ message: "Login successful", token, id });
+    res.status(200).json({ message: "Login successful", token, id: user._id });
   } catch (error) {
     res.status(500).json({ message: "Error logging in", error });
   }
@@ -67,7 +67,7 @@ exports.updateUserDetails = async ( req, res ) => {
     }
     res.status(200).json({
       message: "user updated successfully.",
-      room: updatedUser,
+      user: updatedUser,
     });
   } catch (error) {
     console.error("Error updating user details:", error);

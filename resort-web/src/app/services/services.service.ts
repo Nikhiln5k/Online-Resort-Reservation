@@ -60,4 +60,9 @@ export class ServicesService {
     return this.commonAPI('GET', `${this.apiUrl}/user/${userId}`);
   }
 
+  // get user details
+  updateUser(userId: string, data: any): Observable<any> {
+    return this.commonAPI('PUT', `${this.apiUrl}/user/${userId}`, data);
+  }
+
 }

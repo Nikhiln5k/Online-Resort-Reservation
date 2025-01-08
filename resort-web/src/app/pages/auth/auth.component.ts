@@ -45,9 +45,7 @@ export class AuthComponent implements OnInit {
         // console.log(this.authForm.controls);
         return;
       }
-
       const formData = this.authForm.value;
-
       if (this.isLoginMode) {
         // Login
         this.authService.login(formData).subscribe({
