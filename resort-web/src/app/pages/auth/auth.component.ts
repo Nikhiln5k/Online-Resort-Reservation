@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { ServicesService } from 'src/app/services/services.service';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.css']
+  styleUrls: ['./auth.component.css'],
 })
 export class AuthComponent implements OnInit {
-
-  isLoginMode:boolean = true;
+  isLoginMode: boolean = true;
   authForm: FormGroup;
 
-  private auth = getAuth();
+  // private auth = getAuth();
 
   constructor(
     private router: Router,
@@ -23,7 +22,7 @@ export class AuthComponent implements OnInit {
   ) {
     // Initialize forms with validation
     this.authForm = this.fb.group({
-      name: ['',!this.isLoginMode? [Validators.required]:[]],
+      name: ['', !this.isLoginMode ? [Validators.required] : []],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
@@ -42,13 +41,13 @@ export class AuthComponent implements OnInit {
     try {
       if (this.authForm.invalid) {
         alert('Please fill the form completely');
-        console.log(this.authForm.errors);
-        console.log(this.authForm.controls);
+        // console.log(this.authForm.errors);
+        // console.log(this.authForm.controls);
         return;
       }
-  
+
       const formData = this.authForm.value;
-  
+
       if (this.isLoginMode) {
         // Login
         this.authService.login(formData).subscribe({
@@ -66,10 +65,14 @@ export class AuthComponent implements OnInit {
               alert('An error occurred while storing session data.');
             }
           },
-          error: err => {
+          error: (err) => {
             console.error('Login failed:', err);
-            alert(`Login failed: ${err?.error.message || 'An error occurred. Please try again.'}`);
-          }
+            alert(
+              `Login failed: ${
+                err?.error.message || 'An error occurred. Please try again.'
+              }`
+            );
+          },
         });
       } else {
         // Register
@@ -77,11 +80,16 @@ export class AuthComponent implements OnInit {
           next: () => {
             alert('Registration successful');
             this.authForm.reset();
+            this.toggleMode();
           },
-          error: err => {
+          error: (err) => {
             console.error('Registration failed:', err);
-            alert(`Registration failed: ${err?.error.message || 'An error occurred. Please try again.'}`);
-          }
+            alert(
+              `Registration failed: ${
+                err?.error.message || 'An error occurred. Please try again.'
+              }`
+            );
+          },
         });
       }
     } catch (error) {
@@ -89,18 +97,17 @@ export class AuthComponent implements OnInit {
       alert('An unexpected error occurred. Please try again.');
     }
   }
-  
+
   // google signup
   googleSignIn() {
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
-
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const idToken = await result.user.getIdToken();
         this.authService.googleSignUp(idToken).subscribe(
           (response) => {
-            console.log('Google Sign-Up Success:', response);
+            // console.log('Google Sign-Up Success:', response);
             alert('Sign-Up Successful!');
             const token = response.loginToken;
             const uid = response.user.id;

@@ -41,9 +41,8 @@ exports.userLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid Password" });
     }
 
-    const id = user._id;
     // token
-    const token = jwt.sign({ id: id, role: user.role }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
     res.status(200).json({ message: "Login successful", token, id });
@@ -51,6 +50,30 @@ exports.userLogin = async (req, res) => {
     res.status(500).json({ message: "Error logging in", error });
   }
 };
+
+// update user details
+exports.updateUserDetails = async ( req, res ) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+    const updatedUser = await Users.findByIdAndUpdate(
+      id,
+      { name, email, password },
+      { new : true}
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "user not found." });
+    }
+    res.status(200).json({
+      message: "user updated successfully.",
+      room: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating user details:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+}
 
 // get user details
 exports.getUserDetails = async (req, res) => {

@@ -29,22 +29,25 @@ export class UserComponent implements OnInit{
 
   ngOnInit(): void {
     const userId = sessionStorage.getItem('uid');
-
-    if(!userId){
-      return alert('User not found')
+    if (!userId) {
+      return alert('User not found');
     }
     this.getUserDetails(userId);
   }
-
-  async getUserDetails(userId: string): Promise<void> {
-    try {
-      const response = await this.userService.getUser(userId).toPromise(); // Convert Observable to Promise
-      this.profile = response;
-      console.log('User details:', this.profile);
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-    }
+  
+  getUserDetails(userId: string): void {
+    this.userService.getUser(userId).subscribe({
+      next: (response) => {
+        this.profile = response;
+        // console.log('User details:', this.profile);
+      },
+      error: (error) => {
+        console.error('Error fetching user details:', error);
+        alert('Error fetching user details. Please try again.');
+      }
+    });
   }
+  
 
   // Switch tabs
   switchTab(tab: string) {
@@ -58,7 +61,7 @@ export class UserComponent implements OnInit{
   // Save profile changes
   saveProfile() {
     this.isEditing = false;
-    console.log(this.profile)
+    // console.log(this.profile)
     alert('Profile updated successfully!');
   }
 
