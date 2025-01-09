@@ -39,30 +39,41 @@ export class ServicesService {
 
   }
 
-  // Register API
+  // Register
   register(user: any): Observable<any> {
     return this.commonAPI('POST', `${this.apiUrl}/user/register`, user);
   }
 
-  // Login API
+  // Login
   login(user: any): Observable<any> {
     return this.commonAPI('POST', `${this.apiUrl}/user/login`, user);
   }
   
-  // google signup
+  // Google signup
   googleSignUp(idToken: string): Observable<any> {
     const body = {idToken};
     return this.commonAPI('POST',`${this.apiUrl}/user/google-signup`, body);
   }
 
-  // get user details
+  // Get user details
   getUser(userId: string): Observable<any> {
     return this.commonAPI('GET', `${this.apiUrl}/user/${userId}`);
   }
 
-  // get user details
+  // Get user details
   updateUser(userId: string, userDetails: any): Observable<any> {
     return this.commonAPI('PUT', `${this.apiUrl}/user/${userId}`, userDetails);
   }
+
+  // Get all rooms
+  getAllRooms(page:Number, limit:Number): Observable<any> {
+    return this.commonAPI('GET', `${this.apiUrl}/rooms?page=${page}&limit=${limit}`);
+  }
+
+  // Get room details
+  getRoomDetails(roomId: string): Observable<any> {
+    return this.commonAPI('GET', `${this.apiUrl}/rooms/${roomId}`);
+  }
+
 
 }

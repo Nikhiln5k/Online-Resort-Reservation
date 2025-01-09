@@ -104,8 +104,11 @@ exports.getRoomDetails = async (req, res) => {
     }
     res.status(200).json({
       id: room._id,
+      price: room.price,
       title: room.title,
+      description: room.description,
       amenities: room.amenities,
+      images: room.images,
       availability: room.availability,
       reviews: room.reviews,
     })

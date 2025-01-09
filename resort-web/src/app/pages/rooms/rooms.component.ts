@@ -1,74 +1,77 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { ServicesService } from 'src/app/services/services.service';
 
 @Component({
   selector: 'app-rooms',
   templateUrl: './rooms.component.html',
-  styleUrls: ['./rooms.component.css']
+  styleUrls: ['./rooms.component.css'],
 })
-export class RoomsComponent {
-  constructor ( private router: Router ) {}
+export class RoomsComponent implements OnInit {
+  rooms: any[] = [];
+  currentPage: number = 1;
+  limit: number = 2;
+  totalPages: number = 1;
+  loading: boolean = false;
+  error: string | null = null;
 
-  bgImage = 'assets/9 Modern Minimalist Living Room Designs_ Embrace Simplicity and Elegance.jpeg'
+  constructor(private router: Router, private roomsService: ServicesService, private ngxLoader: NgxUiLoaderService) {}
 
-  rooms = [
-    {
-      name: 'Deluxe Room',
-      description: 'A luxurious room with all modern amenities.',
-      price: 120,
-      image: 'assets/9 Modern Minimalist Living Room Designs_ Embrace Simplicity and Elegance.jpeg',
-      rating:'★★★★☆'
-    },
-    {
-      name: 'Standard Room',
-      description: 'Comfortable and affordable.',
-      price: 80,
-      image: 'assets/Best Gray Bedroom Ideas and Design Inspiration [Montenegro Stone House Renovation Vision Board].jpeg',
-      rating:'★★★★☆'
-    },
-    {
-      name: 'Standard Room',
-      description: 'Comfortable and affordable.',
-      price: 80,
-      image: 'assets/Relaxing Japandi Bedroom Designs.jpeg',
-      rating:'★★★★★'
-    },
-    {
-      name: 'Standard Room',
-      description: 'Comfortable and affordable.',
-      price: 80,
-      image: 'assets/Valentina Deckenleuchte, 2 Farben, 3_5_6-flammig 5 flammes-blanc.jpeg',
-      rating:'★★★★☆'
-    },
-  ];
-
-  navigateTo() {
-    this.router.navigate(['room-details']);
+  ngOnInit(): void {
+    this.loadRooms();
+    if(this.loading){
+      this.ngxLoader.start();
+    } else{
+      this.ngxLoader.stop();
+    }
   }
 
-  currentPage = 1;
-  itemsPerPage = 3; // Number of items per page
-  paginatedRooms = this.rooms.slice(0, this.itemsPerPage);
-  totalPages = Math.ceil(this.rooms.length / this.itemsPerPage);
-
-  updatePagination() {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedRooms = this.rooms.slice(startIndex, endIndex);
+  loadRooms(): void {
+    this.loading = true
+    this.roomsService.getAllRooms(this.currentPage, this.limit).subscribe({
+      next: (response) => {
+        this.rooms = response.data;
+        this.totalPages = Math.ceil(response.count / this.limit);
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Error fetching rooms. Please try again later.';
+        this.loading = false;
+      },
+    });
   }
 
-  nextPage() {
+  nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.updatePagination();
+      this.loadRooms();
     }
   }
 
-  previousPage() {
+  previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.updatePagination();
+      this.loadRooms();
     }
   }
 
+  navigateTo(id:string): void {
+    this.router.navigate(['room-details']);
+    localStorage.setItem('roomId',id);
+  }
+
+  calculateStarRating(reviews: { userId: string; rating: number }[]): string {
+    if (!reviews || reviews.length === 0) {
+      return '☆☆☆☆☆';
+    }
+    // const rating = "★★★★★☆☆☆☆☆";
+    // const totalStars = 5;
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = Math.round(totalRating / reviews.length); // average
+    const fullStars = '★'.repeat(averageRating);
+    const emptyStars = '☆'.repeat(5 - averageRating);
+
+    return fullStars + emptyStars;
+  }
 }
