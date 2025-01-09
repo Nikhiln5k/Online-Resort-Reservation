@@ -13,32 +13,27 @@ export class RoomsComponent implements OnInit {
   currentPage: number = 1;
   limit: number = 2;
   totalPages: number = 1;
-  loading: boolean = false;
   error: string | null = null;
 
   constructor(private router: Router, private roomsService: ServicesService, private ngxLoader: NgxUiLoaderService) {}
 
   ngOnInit(): void {
     this.loadRooms();
-    if(this.loading){
-      this.ngxLoader.start();
-    } else{
-      this.ngxLoader.stop();
-    }
   }
 
   loadRooms(): void {
-    this.loading = true
+    this.ngxLoader.start();
     this.roomsService.getAllRooms(this.currentPage, this.limit).subscribe({
       next: (response) => {
         this.rooms = response.data;
         this.totalPages = Math.ceil(response.count / this.limit);
-        this.loading = false;
       },
       error: (err) => {
         this.error = 'Error fetching rooms. Please try again later.';
-        this.loading = false;
       },
+      complete:()=>{
+        this.ngxLoader.stop();
+      }
     });
   }
 
@@ -56,9 +51,12 @@ export class RoomsComponent implements OnInit {
     }
   }
 
-  navigateTo(id:string): void {
-    this.router.navigate(['room-details']);
-    localStorage.setItem('roomId',id);
+  navigateTo(roomId:string): void {
+    if (!roomId) {
+      console.error('Room ID not found');
+      return;
+    }
+    this.router.navigate(['room-details',roomId]);
   }
 
   calculateStarRating(reviews: { userId: string; rating: number }[]): string {
