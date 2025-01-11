@@ -15,6 +15,8 @@ export class UserComponent implements OnInit {
   isEditing: boolean = false;
   // userDetails
   profile: any = null;
+  bookings:any = null;
+  // roomType:any = null;
 
   constructor(
     private router: Router,
@@ -31,36 +33,11 @@ export class UserComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // Sample data for bookings
-  bookings = [
-    {
-      id: '#101',
-      roomType: 'Deluxe',
-      checkIn: '2025-01-10',
-      checkOut: '2025-01-15',
-      status: 'Upcoming',
-    },
-    {
-      id: '#102',
-      roomType: 'Suite',
-      checkIn: '2024-12-20',
-      checkOut: '2024-12-25',
-      status: 'Completed',
-    },
-    {
-      id: '#103',
-      roomType: 'Standard',
-      checkIn: '2025-01-05',
-      checkOut: '2025-01-07',
-      status: 'Cancelled',
-    },
-  ];
-
-
   ngOnInit(): void {
     const userId = sessionStorage.getItem('uid');
     if (userId) {
       this.getUserDetails(userId);
+      this.getBookings(userId);
     } else {
       alert('User not logged! please login.');
       this.router.navigate(['/auth']);
@@ -104,6 +81,35 @@ export class UserComponent implements OnInit {
         alert('Error updating user details. Please try again.');
       },
     });
+  }
+
+  // get user bookings
+  getBookings(userId:string){
+    this.userService.getUserBookings(userId).subscribe({
+      next:(res) => {
+        this.bookings = res.userBookings;
+      },
+      error:(err)=>{
+        alert(err.message);
+      }
+    })
+  }
+
+  // cancel booking
+  cancelBooking(bookingId: string): void {
+    const confirmCancel = confirm('Are you sure you want to cancel this booking?');
+    if (confirmCancel) {
+      this.userService.updateBookingStatus(bookingId, { status: 'Cancelled' }).subscribe({
+        next: (response) => {
+          alert(response.message || 'Booking cancelled successfully.');
+          this.getBookings(sessionStorage.getItem('uid')!); // Refresh bookings
+        },
+        error: (error) => {
+          console.error('Error cancelling booking:', error);
+          alert('Error cancelling booking. Please try again.');
+        },
+      });
+    }
   }
 
   // Switch tabs

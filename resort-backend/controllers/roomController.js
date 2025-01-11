@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const rooms = require("../models/roomsModel");
 
 // add rooms
@@ -38,7 +37,6 @@ exports.updateRoom = async (req, res) => {
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ message: "Access denied. Admins only." });
     }
-
     const { id } = req.params;
     const { title, price, amenities, images, availability, reviews } = req.body;
 
@@ -54,7 +52,6 @@ exports.updateRoom = async (req, res) => {
       },
       { new: true }
     );
-
     if (!updatedRoom) {
       return res.status(404).json({ message: "Room not found." });
     }

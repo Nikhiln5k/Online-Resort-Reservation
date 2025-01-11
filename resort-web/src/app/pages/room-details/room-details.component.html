@@ -52,12 +52,13 @@
           <div class="text-[var(--dark-text)] text-sm">per night</div>
   
           <!-- Booking Form -->
-          <form class="mt-4 space-y-4">
+          <form [formGroup]="bookingData" class="mt-4 space-y-4">
             <div>
               <label for="checkin" class="block ">Check In</label>
               <input
                 type="date"
                 id="checkin"
+                formControlName="checkIn"
                 class="w-full border rounded-lg p-2"
               />
             </div>
@@ -66,24 +67,16 @@
               <input
                 type="date"
                 id="checkout"
-                class="w-full border rounded-lg p-2"
-              />
-            </div>
-            <div>
-              <label for="guests" class="block ">Guests</label>
-              <input
-                type="number"
-                id="guests"
-                placeholder="Add Guests"
-                min="0"
+                formControlName="checkOut"
                 class="w-full border rounded-lg p-2"
               />
             </div>
   
             <div class="flex items-center justify-between">
-              <span class="text-lg font-bold">$2,250.00</span>
+              <span class="text-lg font-bold">{{totalPrice || roomDetails.price|currency}}</span>
               <button
                 type="button"
+                (click)="bookRoom()"
                 class="bg-primary text-black px-6 py-2"
               >
                 Book Now

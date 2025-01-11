@@ -75,5 +75,19 @@ export class ServicesService {
     return this.commonAPI('GET', `${this.apiUrl}/rooms/${roomId}`);
   }
 
+  // get user bookings
+  getUserBookings(userId: string): Observable<any> {
+    return this.commonAPI('GET', `${this.apiUrl}/bookings/${userId}`);
+  }
+
+  // book room
+  bookRoom(data:any): Observable<any>{
+    return this.commonAPI('POST', `${this.apiUrl}/bookings`,data);
+  }
+
+  // booking status
+  updateBookingStatus(bookingId: string, statusDetails: any): Observable<any> {
+    return this.commonAPI('PUT', `${this.apiUrl}/bookings/${bookingId}`, statusDetails);
+  }
 
 }

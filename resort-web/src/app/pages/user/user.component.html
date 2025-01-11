@@ -5,7 +5,7 @@
       <h2 class="text-center text-xl font-semibold mb-8">User Dashboard</h2>
       <ul class="space-y-4">
         <li
-          class="cursor-pointer p-2 text-center"
+          class="cursor-pointer p-2 text-center tracking-wider"
           [class.bg-[#af9c5e]]="activeTab === 'profile-management'"
           [class.text-black]="activeTab === 'profile-management'"
           (click)="switchTab('profile-management')"
@@ -13,7 +13,7 @@
           Profile Management
         </li>
         <li
-          class="cursor-pointer p-2 text-center"
+          class="cursor-pointer p-2 text-center tracking-wider"
           [class.bg-[#af9c5e]]="activeTab === 'booking-history'"
           [class.text-black]="activeTab === 'booking-history'"
           (click)="switchTab('booking-history')"
@@ -35,11 +35,11 @@
             <h2 class="text-2xl font-bold mb-4">Profile Details</h2>
             <div class="mb-4">
               <p class="font-bold">Name:</p>
-              <p class="text-gray-700">{{ profile?.name || 'N/A' }}</p>
+              <p class="text-gray-800">{{ profile?.name || 'N/A' }}</p>
             </div>
             <div class="mb-4">
               <p class="font-bold">Email:</p>
-              <p class="text-gray-700">{{ profile?.email || 'N/A' }}</p>
+              <p class="text-gray-800">{{ profile?.email || 'N/A' }}</p>
             </div>
             
             <button
@@ -102,38 +102,49 @@
 
       <!-- Booking History -->
       <div *ngIf="activeTab === 'booking-history'">
-        <h2 class="text-2xl font-bold mb-4">Booking History</h2>
-        <div class="overflow-x-auto">
+        <h2 class="text-2xl font-bold mb-4 tracking-wider">Booking History</h2>
+        <div class="overflow-x-auto" *ngIf="bookings && bookings.length>0; else noBookings">
           <table class="table-auto w-full border-collapse border border-gray-300">
             <thead class="bg-gray-200">
               <tr>
-                <th class="border border-gray-300 p-2">Booking ID</th>
-                <th class="border border-gray-300 p-2">Room Type</th>
+                <th class="border border-gray-300 p-2">Room Title</th>
                 <th class="border border-gray-300 p-2">Check-in</th>
                 <th class="border border-gray-300 p-2">Check-out</th>
                 <th class="border border-gray-300 p-2">Status</th>
+                <th class="border border-gray-300 p-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let booking of bookings">
-                <td class="border border-gray-300 p-2 text-center">{{ booking.id }}</td>
-                <td class="border border-gray-300 p-2 text-center">{{ booking.roomType }}</td>
+                <td class="border border-gray-300 p-2 text-center">{{ booking.roomId?.title }}</td>
                 <td class="border border-gray-300 p-2 text-center">{{ booking.checkIn }}</td>
                 <td class="border border-gray-300 p-2 text-center">{{ booking.checkOut }}</td>
                 <td
                   class="border border-gray-300 p-2 text-center"
                   [ngClass]="{
-                    'text-blue-500 font-semibold': booking.status === 'Upcoming',
+                    'text-blue-500 font-semibold': booking.status === 'Pending',
                     'text-green-500 font-semibold': booking.status === 'Completed',
                     'text-red-500 font-semibold': booking.status === 'Cancelled'
                   }"
                 >
                   {{ booking.status }}
                 </td>
+                <td class="border border-gray-300 p-2 text-center">
+                  <button
+                    *ngIf="booking.status !== 'Cancelled'"
+                    class="px-4 py-2 bg-red-500 text-white rounded"
+                    (click)="cancelBooking(booking._id)"
+                  >
+                    Cancel
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
+        <ng-template #noBookings>
+          <p class="text-center text-gray-700 mt-4">No Bookings!</p>
+        </ng-template>
       </div>
     </div>
   </div>
