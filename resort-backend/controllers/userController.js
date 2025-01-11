@@ -1,6 +1,7 @@
 const admin = require("../config/firebase-config");
 const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const crypto = require('crypto');
 const jwt = require("jsonwebtoken");
 
 // register
@@ -109,10 +110,11 @@ exports.googleSignUp = async (req, res) => {
 
     let user = await Users.findOne({ email });
     if (!user) {
+      const randomPassword = crypto.randomBytes(16).toString('hex');
       user = new Users({
         name,
         email,
-        password: "",
+        password: randomPassword,
         role,
       });
       await user.save();
