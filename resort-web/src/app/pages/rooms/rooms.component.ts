@@ -11,7 +11,7 @@ import { ServicesService } from 'src/app/services/services.service';
 export class RoomsComponent implements OnInit {
   rooms: any[] = [];
   currentPage: number = 1;
-  limit: number = 2;
+  limit: number = 10;
   totalPages: number = 1;
   error: string | null = null;
 

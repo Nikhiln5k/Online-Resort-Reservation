@@ -8,11 +8,12 @@ exports.addRoom = async (req, res) => {
       return res.status(403).json({ message: "Access denied. Admins only." });
     }
 
-    const { title, price, amenities, images, availability, reviews } = req.body;
+    const { title, price, description, amenities, images, availability, reviews } = req.body;
 
     const newRoom = new rooms({
       title,
       price,
+      description,
       amenities,
       images,
       availability,
@@ -38,13 +39,14 @@ exports.updateRoom = async (req, res) => {
       return res.status(403).json({ message: "Access denied. Admins only." });
     }
     const { id } = req.params;
-    const { title, price, amenities, images, availability, reviews } = req.body;
+    const { title, price, description, amenities, images, availability, reviews } = req.body;
 
     const updatedRoom = await rooms.findByIdAndUpdate(
       id,
       {
         title,
         price,
+        description,
         amenities,
         images,
         availability,
@@ -74,7 +76,7 @@ exports.getAllRooms = async (req, res) => {
 
     const roomsCount = (await rooms.find()).length;
     const allRooms = await rooms
-      .find({ availability: true })
+      .find()
       .skip(offset)
       .limit(limit);
 

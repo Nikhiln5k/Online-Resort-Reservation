@@ -90,4 +90,19 @@ export class ServicesService {
     return this.commonAPI('PUT', `${this.apiUrl}/bookings/${bookingId}`, statusDetails);
   }
 
+  // update room (admin)
+  updateRoom(roomId: string, reqBody: any, headers:any): Observable<any> {
+    return this.commonAPI('PUT', `${this.apiUrl}/rooms/${roomId}`, reqBody, headers);
+  }
+
+  // delete room (admin)
+  deleteRoom(roomId:string, headers:any): Observable<any>{
+    return this.commonAPI('DELETE', `${this.apiUrl}/rooms/${roomId}`,{},headers);
+  }
+
+  // add room (admin)
+  addRoom(reqBody:any, headers:any): Observable<any>{
+    return this.commonAPI('POST', `${this.apiUrl}/rooms`,reqBody,headers);
+  }
+
 }

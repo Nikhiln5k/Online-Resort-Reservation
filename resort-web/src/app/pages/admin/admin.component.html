@@ -1,1 +1,269 @@
-<p>admin works!</p>
+<main class="flex flex-col lg:flex-row gap-5 w-full h-screen">
+  <!-- Sidebar -->
+  <aside
+    class="pannel bg-[var(--bg-color)] text-white w-full lg:w-1/4 h-auto lg:h-full p-4"
+  >
+    <div class="text-center text-xl font-semibold mb-8">
+      <h2>Welcome back, Admin</h2>
+    </div>
+    <ul class="space-y-4 flex flex-col items-center lg:items-start">
+      <li
+        class="manage-rooms cursor-pointer p-2 w-full text-center tracking-wider rounded-md"
+        [class.bg-[#af9c5e]]="activeTab === 'manage-rooms'"
+        [class.text-black]="activeTab === 'manage-rooms'"
+        (click)="switchTab('manage-rooms')"
+      >
+        Manage Rooms
+      </li>
+      <li
+        class="add-room cursor-pointer p-2 w-full text-center tracking-wider rounded-md"
+        [class.bg-[#af9c5e]]="activeTab === 'add-rooms'"
+        [class.text-black]="activeTab === 'add-rooms'"
+        (click)="switchTab('add-rooms')"
+      >
+        Add Room
+      </li>
+      <li
+        class="manage-bookings cursor-pointer p-2 w-full text-center tracking-wider rounded-md"
+        [class.bg-[#af9c5e]]="activeTab === 'manage-bookings'"
+        [class.text-black]="activeTab === 'manage-bookings'"
+        (click)="switchTab('manage-bookings')"
+      >
+        Manage Bookings
+      </li>
+    </ul>
+  </aside>
+
+  <div class="view p-5 bg-slate-950 w-full overflow-auto">
+    <div class="text-start text-3xl font-semibold mb-8">
+      <h2 class="tracking-wider">
+        Welcome back, <br />
+        Admin
+      </h2>
+    </div>
+    <!-- Manage Rooms Section -->
+    <div class="flex flex-col" *ngIf="activeTab === 'manage-rooms'">
+      <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pb-16">
+        <!-- Room Card -->
+        <div
+          class="room-card shadow-lg border rounded-lg p-4 flex flex-col gap-3"
+          *ngFor="let room of rooms"
+        >
+          <img
+            [src]="room.images[0]"
+            alt="Room Image"
+            class="h-40 w-full object-cover rounded-md"
+          />
+          <h3 class="text-lg text-[var(--dark-text)] font-semibold">
+            {{ room.title }}
+          </h3>
+          <p class="text-[var(--text-color)]">{{ room.description.length > 100 ? (room.description | slice:0:100) + '...' : room.description }}</p>
+          <p class="text-[var(--text-color)] font-bold">
+            <strong>Price :</strong> {{ room.price | currency }}
+          </p>
+          <div class="flex justify-between">
+            <button class="btn btn-secondary" (click)="openEditModal(room)">
+              Edit
+            </button>
+            <button
+              class="bg-red-500 text-white px-4 py-2 hover:bg-red-600"
+              (click)="deleteRoom(room._id)"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Pagination Section -->
+      <div class="pagination">
+        <button
+          class="btn btn-secondary"
+          [disabled]="currentPage === 1"
+          (click)="previousPage()"
+        >
+          Previous
+        </button>
+        <span>Page {{ currentPage }} / {{ totalPages }}</span>
+        <button
+          class="btn btn-secondary"
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+    <!-- Edit Modal -->
+    <div
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      *ngIf="isEditModalOpen"
+    >
+      <div class="bg-[var(--bg-color)] p-6 rounded-lg w-11/12 max-w-md">
+        <h2 class="text-2xl font-bold mb-4">Edit Room</h2>
+        <form (submit)="saveChanges()">
+          <div class="mb-4">
+            <label
+              for="title"
+              class="block text-sm font-medium text-[var(--text-color)]"
+              >Title</label
+            >
+            <input
+              id="title"
+              type="text"
+              name="title"
+              [(ngModel)]="editableRoom.title"
+              class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="price"
+              class="block text-sm font-medium text-[var(--text-color)]"
+              >Price</label
+            >
+            <input
+              id="price"
+              type="number"
+              name="price"
+              [(ngModel)]="editableRoom.price"
+              class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              for="description"
+              class="block text-sm font-medium text-[var(--text-color)]"
+              >Description</label
+            >
+            <textarea
+              id="description"
+              name="description"
+              [(ngModel)]="editableRoom.description"
+              class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+              required
+            ></textarea>
+          </div>
+          <div class="mb-4">
+            <label
+              for="image"
+              class="block text-sm font-medium text-[var(--text-color)]"
+              >Image URL</label
+            >
+            <input
+              id="image"
+              type="text"
+              name="image"
+              [(ngModel)]="editableRoom.images"
+              placeholder="Enter image URLs separated by commas"
+              class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+            />
+          </div>
+          <div class="flex justify-end gap-4">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="closeEditModal()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- add rooms -->
+    <div
+    class=" flex justify-center items-center"
+    *ngIf="activeTab === 'add-rooms'"
+  >
+    <div class="bg-[var(--bg-color)] p-6 rounded-lg w-11/12 max-w-md">
+      <h2 class="text-2xl font-bold mb-4">Edit Room</h2>
+      <form (submit)="addRoom()">
+        <div class="mb-4">
+          <label
+            for="title"
+            class="block text-sm font-medium text-[var(--text-color)]"
+            >Title</label
+          >
+          <input
+            id="title"
+            type="text"
+            name="title"
+            [(ngModel)]="newRoom.title"
+            class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            for="price"
+            class="block text-sm font-medium text-[var(--text-color)]"
+            >Price</label
+          >
+          <input
+            id="price"
+            type="number"
+            name="price"
+            [(ngModel)]="newRoom.price"
+            class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            for="description"
+            class="block text-sm font-medium text-[var(--text-color)]"
+            >Description</label
+          >
+          <textarea
+            id="description"
+            name="description"
+            [(ngModel)]="newRoom.description"
+            class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+            required
+          ></textarea>
+        </div>
+        <!-- Images Input -->
+      <div class="mb-4">
+        <label
+          for="images"
+          class="block text-sm font-medium text-[var(--text-color)]"
+          >Images (comma-separated URLs)</label
+        >
+        <input
+          id="images"
+          type="text"
+          name="images"
+          [(ngModel)]="imagesInput"
+          (ngModelChange)="updateImages(imagesInput)"
+          class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+        />
+      </div>
+
+      <!-- Amenities Input -->
+      <div class="mb-4">
+        <label
+          for="amenities"
+          class="block text-sm font-medium text-[var(--text-color)]"
+          >Amenities (comma-separated)</label
+        >
+        <input
+          id="amenities"
+          type="text"
+          name="amenities"
+          [(ngModel)]="amenitiesInput"
+          (ngModelChange)="updateAmenities(amenitiesInput)"
+          class="block w-full mt-1 bg-transparent rounded-md p-3 shadow-sm"
+        />
+      </div>
+        <div class="flex justify-end gap-4">
+          <button type="submit" class="btn btn-primary">Add Room</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</main>
