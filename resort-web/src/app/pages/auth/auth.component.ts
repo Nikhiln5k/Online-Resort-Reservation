@@ -55,8 +55,10 @@ export class AuthComponent implements OnInit {
             try {
               const uid = res?.id || '';
               const token = res?.token || '';
+              const role = res?.role || '';
               sessionStorage.setItem('token', token);
               sessionStorage.setItem('uid', uid);
+              sessionStorage.setItem('role', role);
               this.router.navigate(['/']);
             } catch (storageError) {
               console.error('Error storing session data:', storageError);
@@ -109,8 +111,10 @@ export class AuthComponent implements OnInit {
             alert('Sign-Up Successful!');
             const token = response.loginToken;
             const uid = response.user.id;
+            const role = response.user.role;
             sessionStorage.setItem('uid', uid);
             sessionStorage.setItem('token', token);
+            sessionStorage.setItem('role', role);
             this.router.navigate(['/']);
           },
           (error) => {

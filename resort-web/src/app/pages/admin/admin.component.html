@@ -4,7 +4,7 @@
     class="pannel bg-[var(--bg-color)] text-white w-full lg:w-1/4 h-auto lg:h-full p-4"
   >
     <div class="text-center text-xl font-semibold mb-8">
-      <h2>Welcome back, Admin</h2>
+      <h2>Dashboard</h2>
     </div>
     <ul class="space-y-4 flex flex-col items-center lg:items-start">
       <li
@@ -46,7 +46,7 @@
       <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pb-16">
         <!-- Room Card -->
         <div
-          class="room-card shadow-lg border rounded-lg p-4 flex flex-col gap-3"
+          class="room-card shadow-lg rounded-lg p-4 flex flex-col gap-3"
           *ngFor="let room of rooms"
         >
           <img
@@ -265,5 +265,68 @@
       </form>
     </div>
   </div>
+
+  <!-- all bookings -->
+  <div *ngIf="activeTab === 'manage-bookings'" class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-6 text-center">All Bookings</h1>
+    <!-- Booking Table -->
+    <div *ngIf="bookings.length > 0" class="overflow-x-auto">
+      <table class="table-auto border-collapse w-full">
+        <thead class="bg-gray-800">
+          <tr>
+            <th class="border px-4 py-2">#</th>
+            <th class="border px-4 py-2">Room</th>
+            <th class="border px-4 py-2">Customer</th>
+            <th class="border px-4 py-2">Check-In</th>
+            <th class="border px-4 py-2">Check-Out</th>
+            <th class="border px-4 py-2">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let booking of bookings; let i = index">
+            <td class="border px-4 py-2">{{ i + 1 }}</td>
+            <td class="border px-4 py-2">{{ booking.roomId?.title }}</td>
+            <td class="border px-4 py-2">{{ booking.userId?.name }}</td>
+            <td class="border px-4 py-2">{{ booking.checkIn | date: 'shortDate' }}</td>
+            <td class="border px-4 py-2">{{ booking.checkOut | date: 'shortDate' }}</td>
+            <td class="border px-4 py-2">
+              <div class="flex justify-center items-center gap-2">
+                <!-- Confirm Button -->
+                <button
+                  *ngIf="booking.status == 'Pending'"
+                  class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all text-sm"
+                  (click)="confirmBooking(booking._id)"
+                >
+                  Confirm
+                </button>
+            
+                <!-- Confirmed Button -->
+                <button
+                  *ngIf="booking.status === 'Confirmed'"
+                  class="px-4 py-2 bg-green-500 text-white rounded cursor-not-allowed text-sm"
+                  disabled
+                >
+                  Confirmed
+                </button>
+                <span
+                  *ngIf="booking.status === 'Cancelled'"
+                  class="px-4 py-2 bg-red-500 text-white rounded cursor-not-allowed text-sm"
+                  disabled
+                >
+                  Cancelled
+                </span>
+              </div>
+            </td>            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- No Bookings Found -->
+    <div *ngIf="bookings.length === 0" class="text-center text-gray-600">
+      <p>No bookings found.</p>
+    </div>
+  </div>
+  
   </div>
 </main>

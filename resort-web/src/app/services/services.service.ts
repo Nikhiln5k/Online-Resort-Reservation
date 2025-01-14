@@ -75,6 +75,11 @@ export class ServicesService {
     return this.commonAPI('GET', `${this.apiUrl}/rooms/${roomId}`);
   }
 
+  // Get room reviews
+  getReviews(roomId: string): Observable<any> {
+    return this.commonAPI('GET', `${this.apiUrl}/rooms/${roomId}/reviews`);
+  }
+
   // get user bookings
   getUserBookings(userId: string): Observable<any> {
     return this.commonAPI('GET', `${this.apiUrl}/bookings/${userId}`);
@@ -103,6 +108,11 @@ export class ServicesService {
   // add room (admin)
   addRoom(reqBody:any, headers:any): Observable<any>{
     return this.commonAPI('POST', `${this.apiUrl}/rooms`,reqBody,headers);
+  }
+
+  // get all bookings
+  getAllBookings(headers:any): Observable<any>{
+    return this.commonAPI('GET', `${this.apiUrl}/bookings`,{},headers);
   }
 
 }

@@ -13,6 +13,7 @@ export class RoomDetailsComponent implements OnInit {
   roomDetails: any;
   bookingData: FormGroup;
   totalPrice: number = 0;
+  reviews: any[] = [];
   constructor(
     private roomService: ServicesService,
     private route: ActivatedRoute,
@@ -27,11 +28,12 @@ export class RoomDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const rommId = this.route.snapshot.paramMap.get('id');
-    if (!rommId) {
+    const roomId = this.route.snapshot.paramMap.get('id');
+    if (!roomId) {
       return alert('room not found');
     }
-    this.fetchRoom(rommId);
+    this.fetchRoom(roomId);
+    this.getReviews(roomId);
     this.bookingData.valueChanges.subscribe(() => this.calculateTotalPrice());
   }
 
@@ -48,6 +50,18 @@ export class RoomDetailsComponent implements OnInit {
         this.ngxLoader.stop();
       },
     });
+  }
+
+  // reviews
+  getReviews(roomId: string){
+    this.roomService.getReviews(roomId).subscribe({
+      next:(res) => {
+        this.reviews = res;
+      },
+      error:(err) =>{
+        console.error(err.message);
+      }
+    })
   }
   
   calculateTotalPrice() {

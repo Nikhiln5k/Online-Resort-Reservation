@@ -13,7 +13,16 @@ const roomsSchema = new mongoose.Schema({
   amenities: [String],
   images: [String],
   availability: Boolean,
-  reviews: [{ userId: String, rating: Number, comment: String }],
+  reviews: [
+    {
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+      },
+      rating: Number,
+      comment: String,
+    },
+  ],
 });
 
 const rooms = mongoose.model("rooms", roomsSchema);

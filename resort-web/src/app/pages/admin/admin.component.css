@@ -1,3 +1,6 @@
+.room-card{
+  border: 1px solid var(--text-color);
+}
 .pagination {
     display: flex;
     align-items: center;
@@ -36,3 +39,5 @@
     outline: none;
     color: #6d634d;
   }
+
+  

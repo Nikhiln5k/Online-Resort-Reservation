@@ -24,6 +24,7 @@ export class AdminComponent implements OnInit{
     images: [],
     amenities: []
   };
+  bookings: any[] = [];
   
   imagesInput: string = '';
   amenitiesInput: string = '';
@@ -40,6 +41,7 @@ export class AdminComponent implements OnInit{
 
   ngOnInit(): void {
     this.loadRooms();
+    this.loadBookings();
   }
 
   loadRooms(): void {
@@ -153,6 +155,45 @@ export class AdminComponent implements OnInit{
       },
       complete:()=>{
         this.ngxLoader.stop();
+      }
+    })
+  }
+
+  // get all bookings
+  loadBookings(){
+    this.ngxLoader.start();
+    const token = sessionStorage.getItem('token')
+    if(!token){
+      return console.error('token required');
+    }
+    const headers = {
+      Authorization: `Bearer ${token}`
+    }
+    this.services.getAllBookings(headers).subscribe({
+      next:(res) => {
+        this.bookings = res.allBookings;
+      },
+      error:(err) => {
+        console.error(err.message);
+        this.ngxLoader.stop();
+      },
+      complete:()=>{
+        this.ngxLoader.stop();
+      }
+    })
+  }
+
+  // confirm booking
+  confirmBooking(id: string){
+    if(!id){
+      return console.log('id required');
+    };
+    this.services.updateBookingStatus(id, { status: 'Confirmed' }).subscribe({
+      next:(res)=>{
+        alert(res.message);
+      },
+      error:(err)=>{
+        console.error(err.message);
       }
     })
   }

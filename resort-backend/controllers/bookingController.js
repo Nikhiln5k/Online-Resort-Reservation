@@ -44,24 +44,43 @@ exports.getAllBookings = async (req, res) => {
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ message: "Access denied. Admins only." });
     }
-    const allBookings = await bookings.find();
-    res.status(200).json({ message: "Bookings retrieved successfully", allBookings });
+    const allBookings = await bookings
+      .find()
+      .populate("roomId", "title")
+      .populate("userId", "name")
+      .sort({ bookedAt: -1 })
+      .exec();
+    res
+      .status(200)
+      .json({ message: "Bookings retrieved successfully", allBookings });
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving bookings", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error retrieving bookings", error: error.message });
   }
 };
 
-  // get user bookings
+// get user bookings
 exports.getUserBookings = async (req, res) => {
   try {
     const { userId } = req.params;
-    if(!userId){
-      return res.status(404).json({message:"User not found"})
+    if (!userId) {
+      return res.status(404).json({ message: "User not found" });
     }
-    const userBookings = await bookings.find({ userId }).populate('roomId','title').exec();
-    res.status(200).json({ message: "User bookings retrieved successfully", userBookings });
+    const userBookings = await bookings
+      .find({ userId })
+      .populate("roomId", "title")
+      .exec();
+    res
+      .status(200)
+      .json({ message: "User bookings retrieved successfully", userBookings });
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving user bookings", error: error.message });
+    res
+      .status(500)
+      .json({
+        message: "Error retrieving user bookings",
+        error: error.message,
+      });
   }
 };
 
@@ -72,17 +91,21 @@ exports.updateBookings = async (req, res) => {
     const { status } = req.body;
     if (!["Pending", "Confirmed", "Cancelled"].includes(status)) {
       return res.status(400).json({ message: "Invalid status value" });
-    };
+    }
     const statusUpdate = await bookings.findByIdAndUpdate(
       id,
       { status },
-      { new: true },
+      { new: true }
     );
     if (!statusUpdate) {
       return res.status(404).json({ message: "Booking not found" });
     }
-    res.status(200).json({ message: "Booking status updated successfully", statusUpdate });
+    res
+      .status(200)
+      .json({ message: "Booking status updated successfully", statusUpdate });
   } catch (error) {
-    res.status(500).json({ message: "Error updating booking status", error: error.message });
-  };
+    res
+      .status(500)
+      .json({ message: "Error updating booking status", error: error.message });
+  }
 };

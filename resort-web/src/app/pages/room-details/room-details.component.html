@@ -33,7 +33,7 @@
         </p>
         <h2 class="text-2xl text-[var(--dark-text)] font-bold mb-4">{{roomDetails.title || 'N/A'}}</h2>
         <p class=" leading-relaxed">
-          {{roomDetails.description || 'N/A'}}
+          {{ (roomDetails?.description | slice:0:100) + '...' || 'N/A' }}
         </p>
   
         <!-- Facilities -->
@@ -43,6 +43,29 @@
             <span class="material-icons text-primary">check</span> {{amenity || 'N/A'}}
           </div>
         </div>
+        <!-- reviews -->
+        <h3 class="text-xl text-[var(--dark-text)] font-bold mt-6 mb-4">User Reviews</h3>
+        <div class="space-y-4">
+          <div
+            class="p-4 border rounded-lg bg-transparent"
+            *ngFor="let review of reviews"
+          >
+            <div class="flex items-center justify-between">
+              <h4 class="font-semibold text-[var(--dark-text)]">
+                {{ review.userId?.name || 'Anonymous' }}
+              </h4>
+              <div>
+                <span class="text-yellow-500" *ngFor="let star of [].constructor(review.rating)">★</span>
+                <span class="text-gray-400" *ngFor="let star of [].constructor(5 - review.rating)">☆</span>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600 mt-2">
+              {{ review.comment || 'No comments provided' }}
+            </p>
+          </div>
+          <p *ngIf="reviews.length === 0" class="text-gray-500">No reviews available for this room.</p>
+        </div>
+        
       </div>
   
       <!-- Right Section -->

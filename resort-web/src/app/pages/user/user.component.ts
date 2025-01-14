@@ -16,7 +16,7 @@ export class UserComponent implements OnInit {
   // userDetails
   profile: any = null;
   bookings:any = null;
-  // roomType:any = null;
+  isAdmin:boolean = false;
 
   constructor(
     private router: Router,
@@ -29,15 +29,19 @@ export class UserComponent implements OnInit {
     });
   }
 
-  navigateTo() {
-    this.router.navigate(['/']);
+  navigateTo(path:string) {
+    this.router.navigate([path]);
   }
 
   ngOnInit(): void {
     const userId = sessionStorage.getItem('uid');
+    const role = sessionStorage.getItem('role');
     if (userId) {
       this.getUserDetails(userId);
       this.getBookings(userId);
+      if(role){
+        this.isAdmin = true;
+      }
     } else {
       alert('User not logged! please login.');
       this.router.navigate(['/auth']);

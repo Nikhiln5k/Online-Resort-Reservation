@@ -20,12 +20,15 @@
         >
           Booking History
         </li>
+        <li (click)="navigateTo('/admin')" class="cursor-pointer p-2 text-center tracking-wider">
+          Admin Dashboard
+        </li>
       </ul>
     </div>
   
     <!-- Main Content -->
     <div class="flex-1 p-6 bg-gray-100 text-black">
-        <button (click)="navigateTo()" class="mb-10 font-bold text-2xl"><i class="fa-solid fa-arrow-left"></i></button>
+        <button (click)="navigateTo('/')" class="mb-10 font-bold text-2xl"><i class="fa-solid fa-arrow-left"></i></button>
   
       <!-- Profile Management -->
       <div *ngIf="activeTab === 'profile-management'">
