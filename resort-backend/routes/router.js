@@ -1,7 +1,7 @@
 const express = require("express");
 const { googleSignUp, userRegister, userLogin, getUserDetails, updateUserDetails, } = require("../controllers/userController");
 const verifyTokenAndRole = require("../middlewares/authMiddleware");
-const { addRoom, getAllRooms, updateRoom, deleteRoom, getRoomDetails, getReviews } = require("../controllers/roomController");
+const { addRoom, getAllRooms, updateRoom, deleteRoom, getRoomDetails, getReviews, postReviews } = require("../controllers/roomController");
 const { bookRoom, getAllBookings, getUserBookings, updateBookings } = require("../controllers/bookingController");
 
 const router = new express.Router();
@@ -19,6 +19,7 @@ router.delete('/api/rooms/:id', verifyTokenAndRole('admin'), deleteRoom);
 router.get('/api/rooms', getAllRooms);
 router.get('/api/rooms/:id', getRoomDetails);
 router.get('/api/rooms/:id/reviews', getReviews);
+router.post('/api/rooms/:id/reviews', postReviews);
 
 // bookings
 router.post('/api/bookings', bookRoom);

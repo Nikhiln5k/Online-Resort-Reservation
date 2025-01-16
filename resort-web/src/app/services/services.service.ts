@@ -80,6 +80,11 @@ export class ServicesService {
     return this.commonAPI('GET', `${this.apiUrl}/rooms/${roomId}/reviews`);
   }
 
+  // post user reviews
+  postReviews(roomId: string, reqBody:any): Observable<any> {
+    return this.commonAPI('POST', `${this.apiUrl}/rooms/${roomId}/reviews`, reqBody);
+  }
+
   // get user bookings
   getUserBookings(userId: string): Observable<any> {
     return this.commonAPI('GET', `${this.apiUrl}/bookings/${userId}`);

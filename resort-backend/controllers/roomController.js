@@ -1,4 +1,5 @@
 const rooms = require("../models/roomsModel");
+const mongoose = require('mongoose')
 
 // add rooms
 exports.addRoom = async (req, res) => {
@@ -149,6 +150,36 @@ exports.getReviews = async (req, res) => {
     res.status(200).json(room.reviews);
   } catch (error) {
     console.error("Error fetching reviews:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+}
+
+// post reviews
+exports.postReviews = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, rating, comment } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid room ID" });
+    }
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    if (typeof rating !== "number" || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Rating must be a number between 1 and 5" });
+    }
+
+    const room = await rooms.findById(id);
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    room.reviews.push({ userId, rating, comment });
+    await room.save();
+    res.status(200).json({ message:'Review submitted'})
+
+  } catch (error) {
+    console.error("Error posting reviews:", error);
     res.status(500).json({ message: "Internal server error." });
   }
 }

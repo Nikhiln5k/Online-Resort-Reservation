@@ -39,7 +39,7 @@ export class UserComponent implements OnInit {
     if (userId) {
       this.getUserDetails(userId);
       this.getBookings(userId);
-      if(role){
+      if(role == 'admin'){
         this.isAdmin = true;
       }
     } else {

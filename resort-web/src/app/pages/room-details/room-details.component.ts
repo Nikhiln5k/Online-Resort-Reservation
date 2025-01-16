@@ -14,6 +14,10 @@ export class RoomDetailsComponent implements OnInit {
   bookingData: FormGroup;
   totalPrice: number = 0;
   reviews: any[] = [];
+  stars = [1, 2, 3, 4, 5];
+  currentRating = 0;
+  hoverRatings = 0;
+  feedback = '';
   constructor(
     private roomService: ServicesService,
     private route: ActivatedRoute,
@@ -63,6 +67,55 @@ export class RoomDetailsComponent implements OnInit {
       }
     })
   }
+  selectRating(rating: number): void {
+    this.currentRating = rating;
+  }
+
+  hoverRating(rating: number): void {
+    this.hoverRatings = rating;
+  }
+  resetHover(): void {
+    this.hoverRatings = 0;
+  }
+
+  resetForm(): void {
+    this.currentRating = 0;
+    this.feedback = '';
+  }
+
+  submitFeedback(): void {
+    if (this.currentRating === 0) {
+      alert('Please select a rating.');
+      return;
+    }
+    if (!this.feedback.trim()) {
+      alert('Please enter your feedback.');
+      return;
+    }
+    const roomId = this.route.snapshot.paramMap.get('id');
+    if(!roomId){
+      return console.error('roomId required')
+    }
+    const userId = sessionStorage.getItem('uid');
+    const review = {
+      userId: userId,
+      rating: this.currentRating,
+      comment: this.feedback,
+    };
+    this.roomService.postReviews(roomId, review).subscribe({
+      next:(res) => {
+        // console.log('Review submitted:', review);
+        alert('Thank you for your feedback!');
+        alert(res.message);
+        this.getReviews(roomId);
+      },
+      error:(err) => {
+        console.error(err.message);
+      }
+    })
+    this.resetForm();
+  }
+
   
   calculateTotalPrice() {
     const { checkIn, checkOut } = this.bookingData.value;

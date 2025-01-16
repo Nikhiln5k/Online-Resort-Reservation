@@ -20,7 +20,7 @@
         >
           Booking History
         </li>
-        <li (click)="navigateTo('/admin')" class="cursor-pointer p-2 text-center tracking-wider">
+        <li (click)="navigateTo('/admin')" *ngIf="isAdmin" class="cursor-pointer p-2 text-center tracking-wider">
           Admin Dashboard
         </li>
       </ul>

@@ -46,6 +46,33 @@
         <!-- reviews -->
         <h3 class="text-xl text-[var(--dark-text)] font-bold mt-6 mb-4">User Reviews</h3>
         <div class="space-y-4">
+          <div class="flex flex-col my-4">
+            <!-- Star Rating Input -->
+            <div class="flex mb-2 justify-center gap-2">
+              <i
+                *ngFor="let star of stars; let index = index"
+                (click)="selectRating(index + 1)"
+                (mouseover)="hoverRating(index + 1)"
+                (mouseleave)="resetHover()"
+                [ngClass]="{
+                  'text-yellow-500': index + 1 <= currentRating || index + 1 <= hoverRatings,
+                  'text-gray-400': index + 1 > hoverRatings && index + 1 > currentRating
+                }"
+                class="fa fa-star cursor-pointer text-2xl"
+              ></i>
+            </div>
+            <!-- Feedback Input -->
+            <div class="flex w-full">
+              <input
+                type="text"
+                class="bg-transparent outline-none border w-full p-2"
+                placeholder="Enter your feedback"
+                [(ngModel)]="feedback"
+              />
+              <button class="bg-primary text-black border-none px-6 py-2 ml-2" (click)="submitFeedback()">Send</button>
+            </div>
+          </div>
+        
           <div
             class="p-4 border rounded-lg bg-transparent"
             *ngFor="let review of reviews"
@@ -59,11 +86,11 @@
                 <span class="text-gray-400" *ngFor="let star of [].constructor(5 - review.rating)">☆</span>
               </div>
             </div>
-            <p class="text-sm text-gray-600 mt-2">
+            <p class="text-sm text-[var(--text-color)] mt-2">
               {{ review.comment || 'No comments provided' }}
             </p>
           </div>
-          <p *ngIf="reviews.length === 0" class="text-gray-500">No reviews available for this room.</p>
+          <p *ngIf="reviews.length === 0" class="text-[var(--text-color)]">No reviews available for this room.</p>
         </div>
         
       </div>
