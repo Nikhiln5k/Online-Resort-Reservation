@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ServicesService } from 'src/app/services/services.service';
 
@@ -22,7 +23,8 @@ export class RoomDetailsComponent implements OnInit {
     private roomService: ServicesService,
     private route: ActivatedRoute,
     private ngxLoader: NgxUiLoaderService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
   ) {
     this.bookingData = fb.group({
       checkIn: '',
@@ -34,7 +36,8 @@ export class RoomDetailsComponent implements OnInit {
   ngOnInit(): void {
     const roomId = this.route.snapshot.paramMap.get('id');
     if (!roomId) {
-      return alert('room not found');
+      this.toastr.warning('room not found');
+      return;
     }
     this.fetchRoom(roomId);
     this.getReviews(roomId);
@@ -48,7 +51,7 @@ export class RoomDetailsComponent implements OnInit {
         this.roomDetails = res;
       },
       error: (err) => {
-        console.error('error fetching room details', err.message);
+        this.toastr.error('error fetching room details', err.message);
       },
       complete: () => {
         this.ngxLoader.stop();
@@ -63,7 +66,7 @@ export class RoomDetailsComponent implements OnInit {
         this.reviews = res;
       },
       error:(err) =>{
-        console.error(err.message);
+        this.toastr.error(err.message);
       }
     })
   }
@@ -85,16 +88,17 @@ export class RoomDetailsComponent implements OnInit {
 
   submitFeedback(): void {
     if (this.currentRating === 0) {
-      alert('Please select a rating.');
+      this.toastr.warning('Please select a rating.');
       return;
     }
     if (!this.feedback.trim()) {
-      alert('Please enter your feedback.');
+      this.toastr.warning('Please enter your feedback.');
       return;
     }
     const roomId = this.route.snapshot.paramMap.get('id');
     if(!roomId){
-      return console.error('roomId required')
+      this.toastr.error('roomId required')
+      return;
     }
     const userId = sessionStorage.getItem('uid');
     const review = {
@@ -105,12 +109,12 @@ export class RoomDetailsComponent implements OnInit {
     this.roomService.postReviews(roomId, review).subscribe({
       next:(res) => {
         // console.log('Review submitted:', review);
-        alert('Thank you for your feedback!');
-        alert(res.message);
+        this.toastr.info('Thank you for your feedback!');
+        this.toastr.success(res.message);
         this.getReviews(roomId);
       },
       error:(err) => {
-        console.error(err.message);
+        this.toastr.error(err.message);
       }
     })
     this.resetForm();
@@ -142,16 +146,17 @@ export class RoomDetailsComponent implements OnInit {
     const userId = sessionStorage.getItem('uid');
     const roomId = this.route.snapshot.paramMap.get('id');
     if (!userId || !roomId) {
-      return alert('User ID and Room ID are required');
+      this.toastr.warning('User ID and Room ID are required');
+      return;
     }
     const formData = this.bookingData.value;
     const data = { ...formData, userId, roomId, totalPrice: this.totalPrice };
     this.roomService.bookRoom(data).subscribe({
       next: (res) => {
-        alert(res.message);
+        this.toastr.success(res.message);
       },
       error: (err) => {
-        alert(err.message);
+        this.toastr.error(err.message);
       },
     });
   }

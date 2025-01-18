@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ServicesService } from 'src/app/services/services.service';
 
@@ -15,7 +16,12 @@ export class RoomsComponent implements OnInit {
   totalPages: number = 1;
   error: string | null = null;
 
-  constructor(private router: Router, private roomsService: ServicesService, private ngxLoader: NgxUiLoaderService) {}
+  constructor(
+    private router: Router,
+    private roomsService: ServicesService,
+    private ngxLoader: NgxUiLoaderService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.loadRooms();
@@ -31,9 +37,9 @@ export class RoomsComponent implements OnInit {
       error: (err) => {
         this.error = 'Error fetching rooms. Please try again later.';
       },
-      complete:()=>{
+      complete: () => {
         this.ngxLoader.stop();
-      }
+      },
     });
   }
 
@@ -51,12 +57,12 @@ export class RoomsComponent implements OnInit {
     }
   }
 
-  navigateTo(roomId:string): void {
+  navigateTo(roomId: string): void {
     if (!roomId) {
-      console.error('Room ID not found');
+      this.toastr.warning('Room ID not found');
       return;
     }
-    this.router.navigate(['room-details',roomId]);
+    this.router.navigate(['room-details', roomId]);
   }
 
   calculateStarRating(reviews: { userId: string; rating: number }[]): string {

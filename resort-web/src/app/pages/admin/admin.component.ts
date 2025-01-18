@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { ServicesService } from 'src/app/services/services.service';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css']
+  styleUrls: ['./admin.component.css'],
 })
-export class AdminComponent implements OnInit{
+export class AdminComponent implements OnInit {
   rooms: any[] = [];
-  activeTab:string = 'manage-rooms';
+  activeTab: string = 'manage-rooms';
   isEditModalOpen = false;
   editableRoom: any = {};
   currentPage: number = 1;
@@ -22,22 +23,28 @@ export class AdminComponent implements OnInit{
     price: null,
     description: '',
     images: [],
-    amenities: []
+    amenities: [],
   };
   bookings: any[] = [];
-  
+
   imagesInput: string = '';
   amenitiesInput: string = '';
-  
+
+  constructor(
+    private services: ServicesService,
+    private ngxLoader: NgxUiLoaderService,
+    private toastr: ToastrService
+  ) {}
+
   updateImages(imagesInput: string): void {
     this.newRoom.images = imagesInput.split(',').map((url) => url.trim());
   }
-  
-  updateAmenities(amenitiesInput: string): void {
-    this.newRoom.amenities = amenitiesInput.split(',').map((item) => item.trim());
-  }
 
-  constructor(private services: ServicesService, private ngxLoader: NgxUiLoaderService) {}
+  updateAmenities(amenitiesInput: string): void {
+    this.newRoom.amenities = amenitiesInput
+      .split(',')
+      .map((item) => item.trim());
+  }
 
   ngOnInit(): void {
     this.loadRooms();
@@ -54,9 +61,9 @@ export class AdminComponent implements OnInit{
       error: (err) => {
         this.error = 'Error fetching rooms. Please try again later.';
       },
-      complete:()=>{
+      complete: () => {
         this.ngxLoader.stop();
-      }
+      },
     });
   }
 
@@ -90,111 +97,115 @@ export class AdminComponent implements OnInit{
 
   saveChanges() {
     const roomId = this.editableRoom._id;
-    const token = sessionStorage.getItem('token')
-    if(!roomId || !token){
+    const token = sessionStorage.getItem('token');
+    if (!roomId || !token) {
       return console.error('required roomId and token');
     }
     if (typeof this.editableRoom.images === 'string') {
-      this.editableRoom.images = this.editableRoom.images.split(',').map((url: string) => url.trim());
+      this.editableRoom.images = this.editableRoom.images
+        .split(',')
+        .map((url: string) => url.trim());
     }
     // console.log(this.editableRoom);
     const headers = {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    };
     this.services.updateRoom(roomId, this.editableRoom, headers).subscribe({
-      next:(res) => {
+      next: (res) => {
         console.log(res?.message);
         this.loadRooms();
       },
-      error:(err) => {
+      error: (err) => {
         console.log(err.message);
-      }
-    })
+      },
+    });
     this.closeEditModal();
   }
 
   // delete room
   deleteRoom(id: string) {
-    const token = sessionStorage.getItem('token')
-    if(!id || !token){
+    const token = sessionStorage.getItem('token');
+    if (!id || !token) {
       return console.error('required roomId and token');
     }
     const headers = {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    };
     this.services.deleteRoom(id, headers).subscribe({
-      next:(res) => {
+      next: (res) => {
         console.log(res.message);
-        this.loadRooms()
+        this.loadRooms();
       },
-      error:(err) => {
+      error: (err) => {
         console.error(err.message);
-      }
-    })
+      },
+    });
   }
   // add room
   addRoom() {
     this.ngxLoader.start();
     const token = sessionStorage.getItem('token');
     const headers = {
-      Authorization : `Bearer ${token}`
-    }
-    if(!token){
+      Authorization: `Bearer ${token}`,
+    };
+    if (!token) {
       console.error('token required');
       this.ngxLoader.stop();
       return;
     }
     this.services.addRoom(this.newRoom, headers).subscribe({
-      next:(res) => {
-        console.log(res?.message);
+      next: (res) => {
+        // console.log(res?.message);
         this.loadRooms();
       },
-      error:(err) => {
-        console.log(err.message);
+      error: (err) => {
+        this.toastr.error(err.message);
         this.ngxLoader.stop();
       },
-      complete:()=>{
+      complete: () => {
         this.ngxLoader.stop();
-      }
-    })
+      },
+    });
   }
 
   // get all bookings
-  loadBookings(){
+  loadBookings() {
     this.ngxLoader.start();
-    const token = sessionStorage.getItem('token')
-    if(!token){
-      return console.error('token required');
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      this.toastr.error('token required');
+      return;
     }
     const headers = {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    };
     this.services.getAllBookings(headers).subscribe({
-      next:(res) => {
+      next: (res) => {
         this.bookings = res.allBookings;
       },
-      error:(err) => {
-        console.error(err.message);
+      error: (err) => {
+        this.toastr.error(err.message);
         this.ngxLoader.stop();
       },
-      complete:()=>{
+      complete: () => {
         this.ngxLoader.stop();
-      }
-    })
+      },
+    });
   }
 
   // confirm booking
-  confirmBooking(id: string){
-    if(!id){
-      return console.log('id required');
-    };
+  confirmBooking(id: string) {
+    if (!id) {
+      this.toastr.warning('room id required');
+      return;
+    }
     this.services.updateBookingStatus(id, { status: 'Confirmed' }).subscribe({
-      next:(res)=>{
-        alert(res.message);
+      next: (res) => {
+        this.toastr.success(res.message);
       },
-      error:(err)=>{
-        console.error(err.message);
-      }
-    })
+      error: (err) => {
+        this.toastr.error(err.message);
+      },
+    });
   }
 }

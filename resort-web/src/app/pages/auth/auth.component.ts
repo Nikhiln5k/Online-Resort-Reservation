@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { ToastrService } from 'ngx-toastr';
 import { ServicesService } from 'src/app/services/services.service';
 
 @Component({
@@ -18,7 +19,8 @@ export class AuthComponent implements OnInit {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private authService: ServicesService
+    private authService: ServicesService,
+    private toastr: ToastrService
   ) {
     // Initialize forms with validation
     this.authForm = this.fb.group({
@@ -40,7 +42,7 @@ export class AuthComponent implements OnInit {
   onSubmit() {
     try {
       if (this.authForm.invalid) {
-        alert('Please fill the form completely');
+        this.toastr.info('Please fill the form completely');
         // console.log(this.authForm.errors);
         // console.log(this.authForm.controls);
         return;
@@ -50,7 +52,7 @@ export class AuthComponent implements OnInit {
         // Login
         this.authService.login(formData).subscribe({
           next: (res: any) => {
-            alert('Login successful');
+            this.toastr.success('Login successful');
             this.authForm.reset();
             try {
               const uid = res?.id || '';
@@ -61,13 +63,13 @@ export class AuthComponent implements OnInit {
               sessionStorage.setItem('role', role);
               this.router.navigate(['/']);
             } catch (storageError) {
-              console.error('Error storing session data:', storageError);
-              alert('An error occurred while storing session data.');
+              // console.error('Error storing session data:', storageError);
+              this.toastr.error('An error occurred while storing session data.');
             }
           },
           error: (err) => {
-            console.error('Login failed:', err);
-            alert(
+            // console.error('Login failed:', err);
+            this.toastr.error(
               `Login failed: ${
                 err?.error.message || 'An error occurred. Please try again.'
               }`
@@ -78,13 +80,13 @@ export class AuthComponent implements OnInit {
         // Register
         this.authService.register(formData).subscribe({
           next: () => {
-            alert('Registration successful');
+            this.toastr.success('Registration successful');
             this.authForm.reset();
             this.toggleMode();
           },
           error: (err) => {
             console.error('Registration failed:', err);
-            alert(
+            this.toastr.error(
               `Registration failed: ${
                 err?.error.message || 'An error occurred. Please try again.'
               }`
@@ -93,8 +95,8 @@ export class AuthComponent implements OnInit {
         });
       }
     } catch (error) {
-      console.error('Unexpected error in onSubmit:', error);
-      alert('An unexpected error occurred. Please try again.');
+      // console.error('Unexpected error in onSubmit:', error);
+      this.toastr.error('An unexpected error occurred. Please try again.');
     }
   }
 
@@ -108,7 +110,7 @@ export class AuthComponent implements OnInit {
         this.authService.googleSignUp(idToken).subscribe(
           (response) => {
             // console.log('Google Sign-Up Success:', response);
-            alert('Sign-Up Successful!');
+            this.toastr.success('Sign-Up Successful!');
             const token = response.loginToken;
             const uid = response.user.id;
             const role = response.user.role;
@@ -118,14 +120,14 @@ export class AuthComponent implements OnInit {
             this.router.navigate(['/']);
           },
           (error) => {
-            console.error('Error in Google Sign-Up:', error);
-            alert('Sign-Up Failed. Please try again.');
+            // console.error('Error in Google Sign-Up:', error);
+            this.toastr.error('Sign-Up Failed. Please try again.');
           }
         );
       })
       .catch((error) => {
-        console.error('Error during Google sign-in:', error);
-        alert('Google Sign-In Failed.');
+        // console.error('Error during Google sign-in:', error);
+        this.toastr.error('Google Sign-In Failed.');
       });
   }
 }

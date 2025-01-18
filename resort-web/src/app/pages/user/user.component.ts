@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { ServicesService } from 'src/app/services/services.service';
 
 @Component({
@@ -21,7 +22,8 @@ export class UserComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: ServicesService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toastr: ToastrService
   ) {
     this.userData = this.fb.group({
       name: '',
@@ -43,7 +45,7 @@ export class UserComponent implements OnInit {
         this.isAdmin = true;
       }
     } else {
-      alert('User not logged! please login.');
+      this.toastr.warning('User not logged! please login.');
       this.router.navigate(['/auth']);
     }
   }
@@ -59,8 +61,8 @@ export class UserComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.error('Error fetching user details:', error);
-        alert('Error fetching user details. Please try again.');
+        // console.error('Error fetching user details:', error);
+        this.toastr.error('Error fetching user details. Please try again.');
       },
     });
   }
@@ -69,20 +71,20 @@ export class UserComponent implements OnInit {
   updateUserdata(): void {
     const userId = sessionStorage.getItem('uid');
     if (!userId) {
-      console.error('User not found! please login.');
+      this.toastr.error('User not found! please login.');
       this.router.navigate(['/auth']);
       return;
     }
     const userDetails = this.userData.value;
     this.userService.updateUser(userId, userDetails).subscribe({
       next: (response) => {
-        alert(response?.message || 'User updated successfully.');
+        this.toastr.success(response?.message || 'User updated successfully.');
         this.profile = response?.user;
         this.toggleEdit(false);
       },
       error: (error) => {
-        console.error('Error updating user details:', error);
-        alert('Error updating user details. Please try again.');
+        // console.error('Error updating user details:', error);
+        this.toastr.error('Error updating user details. Please try again.');
       },
     });
   }
@@ -94,7 +96,7 @@ export class UserComponent implements OnInit {
         this.bookings = res.userBookings;
       },
       error:(err)=>{
-        alert(err.message);
+        this.toastr.error(err.message);
       }
     })
   }
@@ -105,12 +107,12 @@ export class UserComponent implements OnInit {
     if (confirmCancel) {
       this.userService.updateBookingStatus(bookingId, { status: 'Cancelled' }).subscribe({
         next: (response) => {
-          alert(response.message || 'Booking cancelled successfully.');
+          this.toastr.success(response.message || 'Booking cancelled successfully.');
           this.getBookings(sessionStorage.getItem('uid')!); // Refresh bookings
         },
         error: (error) => {
-          console.error('Error cancelling booking:', error);
-          alert('Error cancelling booking. Please try again.');
+          // console.error('Error cancelling booking:', error);
+          this.toastr.error('Error cancelling booking. Please try again.');
         },
       });
     }
@@ -132,7 +134,7 @@ export class UserComponent implements OnInit {
 
   logout() {
     sessionStorage.clear();
-    alert('Logged out success')
+    this.toastr.success('Logged out success')
     this.router.navigate(['/']);
   }
 }

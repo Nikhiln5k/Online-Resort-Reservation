@@ -19,6 +19,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { environment } from 'src/enviornments/enviornment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ToastrModule } from 'ngx-toastr';
 // import { SwiperModule } from 'swiper/angular'
 
 const app = initializeApp(environment.firebaseConfig);
@@ -46,6 +47,7 @@ const analytics = getAnalytics(app);
     HttpClientModule,
     NgxUiLoaderModule,
     NgxUiLoaderHttpModule,
+    ToastrModule.forRoot(),
     // SwiperModule,
   ],
   providers: [],
