@@ -1,4 +1,5 @@
 const bookings = require("../models/bookingsModel");
+const rooms = require("../models/roomsModel");
 
 // book room
 exports.bookRoom = async (req, res) => {
@@ -6,6 +7,10 @@ exports.bookRoom = async (req, res) => {
     const { userId, roomId, checkIn, checkOut, totalPrice } = req.body;
     if (!userId || !roomId || !checkIn || !checkOut || !totalPrice) {
       return res.status(404).json({ message: "Fill out completely" });
+    }
+    const room = await rooms.findById(roomId);
+    if(room.availability == false){
+      return res.status(409).json({message: "Sorry this room is not available yet, please try another!"})
     }
     const convertToIST = (date) => {
       const options = {
@@ -75,12 +80,10 @@ exports.getUserBookings = async (req, res) => {
       .status(200)
       .json({ message: "User bookings retrieved successfully", userBookings });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error retrieving user bookings",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error retrieving user bookings",
+      error: error.message,
+    });
   }
 };
 
@@ -92,17 +95,35 @@ exports.updateBookings = async (req, res) => {
     if (!["Pending", "Confirmed", "Cancelled"].includes(status)) {
       return res.status(400).json({ message: "Invalid status value" });
     }
-    const statusUpdate = await bookings.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
-    if (!statusUpdate) {
+    const booking = await bookings.findById(id);
+
+    if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
+    }
+    booking.status = status;
+    const updatedBooking = await booking.save();
+    if (status === "Confirmed") {
+      const room = await rooms.findById(booking.roomId);
+
+      if (!room) {
+        return res
+          .status(404)
+          .json({ message: "Room associated with booking not found" });
+      }
+
+      // Check the room is already unavailable
+      if (!room.availability) {
+        return res
+          .status(409)
+          .json({ message: "Room is already marked as unavailable" });
+      }
+
+      room.availability = false;
+      await room.save();
     }
     res
       .status(200)
-      .json({ message: "Booking status updated successfully", statusUpdate });
+      .json({ message: "Booking status updated successfully", updatedBooking });
   } catch (error) {
     res
       .status(500)
